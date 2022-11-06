@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Baig_darb_tema4.Repository
 {
-    internal class GradesRepository//internal
+    internal class GradesRepository
     {
-        public List<Grade> GradeList { get; private set; }//
+        public List<Grade> GradeList { get; private set; }
         public GradesRepository()
         {
             GradeList = new List<Grade>();

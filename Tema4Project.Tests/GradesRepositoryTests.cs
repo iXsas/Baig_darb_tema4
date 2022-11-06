@@ -16,7 +16,7 @@ namespace Tema4Project.Tests
             bool expected = true;
 
             //Act
-            //GradesRepository gradesRepository = new GradesRepository();
+           // GradesRepository gradesRepository = new GradesRepository();
             //bool actual = gradesRepository.DidPassTrim(pazymiu_masyvas);
                         
             //Assert
