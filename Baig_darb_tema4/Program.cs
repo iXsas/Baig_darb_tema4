@@ -2,10 +2,8 @@
 using Baig_darb_tema4.Repository;
 using System;
 using System.Collections.Generic;
-
 using System.IO;
 using System.Threading;
-
 
 namespace Baig_darb_tema4
 {
@@ -34,8 +32,8 @@ namespace Baig_darb_tema4
                 Console.WriteLine("Norint pasalinti irasa spauskite:  - ");
                 Console.WriteLine("Norint suformuoti ataskaita spauskite:  g ");
                 Console.WriteLine("Norint išsaugoti suformuota ataskaita spauskite:  s ");
-                string opera = Console.ReadLine();
-                switch (opera)
+                string select = Console.ReadLine();
+                switch (select)
                 {
                     case "+":
                         AddItemManual();
@@ -44,42 +42,25 @@ namespace Baig_darb_tema4
                         GenerateReport();
                         break;
                     case "s":
-                        DateTime now = DateTime.Now;
-                        Console.WriteLine($"Saugomas ataskaitos failas...{now}");
-                        Thread.Sleep(1000); Console.Write($"******"); Thread.Sleep(100); Console.Write($"******"); Thread.Sleep(100);
-                        if (File.Exists("ataskaita.txt")) { File.Delete("ataskaita.txt"); }
-                            File.AppendAllText("ataskaita.txt", $"Ataskaita buvo sugeneruota {now} \n");
-                        var StudList = _DiaryRepo.Retrieve();
-                     //   File.AppendAllText("ataskaita.txt", $"Ataskaita buvo sugeneruota {now} \n");
-                        Console.WriteLine("0----5---10---15---20---25---30---35---40---45---50---55---60---65---70---75---80---85---90---95--100 Liniuotė" + "\n");
-                        String data = String.Format("{0,-3} {1,-6} {2,-13} {3,-15} {4,-10} {5,-10} {6,-20} {7,-10} {8,-10} {9,-10} {10,-10}\n\n",
-                        "Nr.", "Grupe", "Vardas", "Pavarde", "Stud. Nr.", "Trim Nr.", "Trim paz.", "Trim Avg", "Trim Pass", "Year Grade", "Year Pass");
-                        int j = 1;
-                        for (int i = 0; i < StudList.Count; i++)
-                        {
-                            string trimgr = _GradesRepo.ReturnGradesInString(StudList[i].TrimestGrades);
-                            string metpaz, metPASS;
-                            if (j == 3) { metpaz = StudList[i].YearGrade.ToString(); metPASS = StudList[i].YearPass.ToString(); j = 1; }
-                            else { metpaz = " "; metPASS = ""; j++; }
-
-                            data += String.Format("{0,-3} {1,-6} {2,-13} {3, -15} {4,-10} {5,-10} {6,-20} {7,-10} {8,-10} {9,-10} {10,-10}",
-                            i, StudList[i].Group, StudList[i].Name, StudList[i].Surname, StudList[i].StudentNo, StudList[i].TrimestNo,
-                            trimgr, StudList[i].TrimestAVG, StudList[i].TrimestPass, metpaz, metPASS);
-                            Console.WriteLine($"{data}");
-                            File.AppendAllText("ataskaita.txt", $" {data}\n"); data = "";                           
-                        }
-
-                        Console.WriteLine($"Ataskaita buvo issaugota");
-                        break;              
-                }
-
+                        SaveGeneratedReport();
+                        break;
+                    case "-":
+                        RemoveItemManual();
+                        break;
+                    }
+                
                 Console.WriteLine("\nAr norite testi y/n");
-                if (Console.ReadLine() == "y")
-                {
-                    continue;
+                    if (Console.ReadLine() == "y")
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Dienynas uždaromas viso gero..."); Console.Write($"\n******");
+                        Thread.Sleep(1500); Console.Write($"******"); Thread.Sleep(1500); Console.Write($"******"); Thread.Sleep(1500); 
+                        break;
+                    }
                 }
-
-            }
 
 
             void CreateDiary()
@@ -157,6 +138,48 @@ namespace Baig_darb_tema4
                _GradesRepo.DidPassTrim(pazymiu_mas)); NewItem.TrimestAVG = _GradesRepo.CountTrimtAvg(pazymiu_mas);
                 _DiaryRepo.AddItem(NewItem);
             }
+
+            void SaveGeneratedReport()
+             {
+                    DateTime now = DateTime.Now;
+                    Console.WriteLine($"Saugomas ataskaitos failas...{now}");
+                    Thread.Sleep(1000); Console.Write($"******"); Thread.Sleep(100); Console.Write($"******"); Thread.Sleep(100);
+                    if (File.Exists("ataskaita.txt")) { File.Delete("ataskaita.txt"); }
+                    File.AppendAllText("ataskaita.txt", $"Ataskaita buvo sugeneruota {now} \n");
+                    var StudList = _DiaryRepo.Retrieve();
+                    Console.WriteLine("0----5---10---15---20---25---30---35---40---45---50---55---60---65---70---75---80---85---90---95--100 Liniuotė" + "\n");
+                    String data = String.Format("{0,-3} {1,-6} {2,-13} {3,-15} {4,-10} {5,-10} {6,-20} {7,-10} {8,-10} {9,-10} {10,-10}\n\n",
+                    "Nr.", "Grupe", "Vardas", "Pavarde", "Stud. Nr.", "Trim Nr.", "Trim paz.", "Trim Avg", "Trim Pass", "Year Grade", "Year Pass");
+                    int j = 1;
+                    for (int i = 0; i < StudList.Count; i++)
+                    {
+                        string trimgr = _GradesRepo.ReturnGradesInString(StudList[i].TrimestGrades);
+                        string metpaz, metPASS;
+                        if (j == 3) { metpaz = StudList[i].YearGrade.ToString(); metPASS = StudList[i].YearPass.ToString(); j = 1; }
+                        else { metpaz = " "; metPASS = ""; j++; }
+
+                        data += String.Format("{0,-3} {1,-6} {2,-13} {3, -15} {4,-10} {5,-10} {6,-20} {7,-10} {8,-10} {9,-10} {10,-10}",
+                        i, StudList[i].Group, StudList[i].Name, StudList[i].Surname, StudList[i].StudentNo, StudList[i].TrimestNo,
+                        trimgr, StudList[i].TrimestAVG, StudList[i].TrimestPass, metpaz, metPASS);
+                        Console.WriteLine($"{data}");
+                        File.AppendAllText("ataskaita.txt", $" {data}\n"); data = "";
+                    }
+                    Console.WriteLine($"Ataskaita buvo issaugota");
+                    Console.Write($"\n******"); Thread.Sleep(500); Console.Write($"******"); Thread.Sleep(500);Console.Write($"******"); Thread.Sleep(500);
+              }
+
+            void RemoveItemManual()
+             {
+                    var StudListUpdated = _DiaryRepo.Retrieve();
+                    Console.WriteLine("Iveskite dienyno iraso numeri, kuri norite pasalinti ir spauskite enter");
+                    int pasalinti = Convert.ToInt32(Console.ReadLine());
+                    for (int i = 0; i < StudListUpdated.Count; i++)
+                    {
+                        if (pasalinti == i) { _DiaryRepo.RemoveItem(StudListUpdated[i]); }
+                    }
+                    Console.WriteLine($"Dienyno iraso numeris {pasalinti} buvo pasalintas");
+              }
+
         }
     }
 }
